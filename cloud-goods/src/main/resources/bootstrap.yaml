@@ -1,0 +1,94 @@
+spring:
+  application:
+    name: CLOUD-GOODS
+
+
+
+---
+server:
+  port: 11112
+---
+# nacos 配置
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: jaswine.top:18848
+        file-extension: yaml
+        # DEV
+        namespace: 003df6da-f581-4062-a3c3-7f9c3a50bdc2
+
+
+---
+# seata
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: my_test_tx_group
+  config:
+    type: nacos
+    nacos:
+      namespace: 003df6da-f581-4062-a3c3-7f9c3a50bdc2
+      server-addr: jaswine.top:18848
+      group: SEATA-GROUP
+      username: nacos
+      password: Jasmine1017
+  registry:
+    type: nacos
+    nacos:
+      application: SEATA-SERVER
+      namespace: 003df6da-f581-4062-a3c3-7f9c3a50bdc2
+      server-addr: jaswine.top:18848
+      username: nacos
+      password: Jasmine1017
+
+---
+rocketmq:
+  name-server: 192.168.100.200:9876
+  producer:
+    group: demo
+---
+# 数据库配置
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      max-active: 10
+      initial-size: 5
+      min-idle: 2
+      max-wait: 60000
+      pool-prepared-statements: true
+      web-stat-filter:
+        enabled: true
+        url-pattern: /druid
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  check-config-location: true
+  type-aliases-package: com.jaswine.bean.pojo
+  configuration:
+    jdbc-type-for-null: null
+    cache-enabled: false
+    multiple-result-sets-enabled: true
+    default-executor-type: reuse
+    lazy-loading-enabled: false
+    aggressive-lazy-loading: true
+    default-statement-timeout: 3000
+    call-setters-on-nulls: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: partial
+    auto-mapping-unknown-column-behavior: none
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+    return-instance-for-empty-row: false
+    local-cache-scope: session
+
+---
+#日志配置
+# 日志等级
+logging:
+  level:
+    com.alibaba.nacos.* : error
+  file:
+    max-size: 1GB
+  path: /logs/cloud-goods/
